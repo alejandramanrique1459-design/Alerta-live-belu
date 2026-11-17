@@ -29,7 +29,7 @@ def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("ayuda", ayuda))
-app.add_handler(CommandHandler("id", id_grupo))
+    app.add_handler(CommandHandler("id", id_grupo))
     app.run_polling()
 
 if __name__ == "__main__":
