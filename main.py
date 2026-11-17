@@ -1,28 +1,38 @@
 
-name: Alerta LIVE Belu
+import os
+import logging
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+TOKEN = os.environ["BOT_TOKEN"]
 
-jobs:
-  bot:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Descargar repositorio
-        uses: actions/checkout@v4
+logging.basicConfig(level=logging.INFO)
 
-      - name: Preparar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "❤️ ¡Bienvenida a Alerta LIVE Belu!\n\n"
+        "Aquí recibirás avisos cuando @Santobelen_ "
+        "comience un directo en TikTok.\n\n"
+        "Estamos preparando las alertas. 🔔"
+    )
 
-      - name: Instalar dependencias
-        run: pip install -r requirements.txt
+async def ayuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Alerta LIVE Belu 🔔\n"
+        "Usa /start para activar el bot."
+    )
 
-      - name: Iniciar bot
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        run: python main.py
+async def id_grupo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        f"ID de este grupo: {update.effective_chat.id}"
+    )
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("ayuda", ayuda))
+    app.add_handler(CommandHandler("id", id_grupo))
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
