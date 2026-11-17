@@ -1,12 +1,12 @@
-
-name: Alerta LIVE Belu
-
 on:
   workflow_dispatch:
   push:
     branches:
       - main
 
+concurrency:
+  group: alerta-live-belu
+  cancel-in-progress: true
 jobs:
   bot:
     runs-on: ubuntu-latest
