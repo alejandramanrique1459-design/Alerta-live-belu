@@ -1,0 +1,32 @@
+
+import os
+import logging
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
+
+TOKEN = os.environ["BOT_TOKEN"]
+
+logging.basicConfig(level=logging.INFO)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "❤️ ¡Bienvenida a Alerta LIVE Belu!\n\n"
+        "Aquí recibirás avisos cuando @Santobelen_ "
+        "comience un directo en TikTok.\n\n"
+        "Estamos preparando las alertas. 🔔"
+    )
+
+async def ayuda(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Alerta LIVE Belu 🔔\n"
+        "Usa /start para activar el bot."
+    )
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("ayuda", ayuda))
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
