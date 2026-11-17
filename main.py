@@ -7,11 +7,10 @@ import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from TikTokLive import TikTokLiveClient
-from TikTokLive.events import ConnectEvent
 
 TOKEN = os.environ["BOT_TOKEN"]
 GROUP_ID = -5461828369
-TIKTOK_USER = "@santobelen_"
+TIKTOK_USER = "santobelen_"
 
 logging.basicConfig(level=logging.INFO)
 
@@ -30,29 +29,31 @@ async def id_grupo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def vigilar_directo(app):
-    client = TikTokLiveClient(unique_id=TIKTOK_USER)
-
-    @client.on(ConnectEvent)
-    async def al_conectar(event: ConnectEvent):
-        await app.bot.send_message(
-            chat_id=GROUP_ID,
-            text=(
-                "🔴❤️ ¡BELÉN ESTÁ EN DIRECTO!\n\n"
-                "Entra aquí para verla:\n"
-                "https://www.tiktok.com/@santobelen_/live"
-            )
-        )
+    estaba_en_directo = False
 
     while True:
         try:
-            if await client.is_live():
-                await client.connect()
+            client = TikTokLiveClient(unique_id=TIKTOK_USER)
+            esta_en_directo = await client.is_live()
 
-            await asyncio.sleep(60)
+            logging.info(f"Estado del directo de Belu: {esta_en_directo}")
+
+            if esta_en_directo and not estaba_en_directo:
+                await app.bot.send_message(
+                    chat_id=GROUP_ID,
+                    text=(
+                        "🔴❤️ ¡BELÉN ESTÁ EN DIRECTO!\n\n"
+                        "Entra aquí para verla:\n"
+                        "https://www.tiktok.com/@santobelen_/live"
+                    )
+                )
+
+            estaba_en_directo = esta_en_directo
 
         except Exception:
             logging.exception("Error comprobando el directo")
-            await asyncio.sleep(60)
+
+        await asyncio.sleep(60)
 
 async def main():
     app = Application.builder().token(TOKEN).build()
@@ -72,3 +73,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
