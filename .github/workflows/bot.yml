@@ -25,4 +25,5 @@ jobs:
       - name: Iniciar bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        
         run: python main.py
